@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 说明Spring数据键值框架使编写使用键值存储的Spring应用程序变得容易。 它最大程度地减少了与商店交互所需的冗余任务和样板代码。该框架非常适合Redis和Riak等键值存储。 在本文档中将介绍如何在默认的基于java.util.Map的实现中使用Spring Data Key Value  。 第一部分、环境搭建1.创建Maven工程，添加依赖项坐标12345&lt;depend">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringDataKeyValue">
+<meta property="og:url" content="http://yoursite.com/2020/07/15/SpringDataKeyValue/index.html">
+<meta property="og:site_name" content="LoneStar&#39;s Space">
+<meta property="og:description" content="[TOC] 说明Spring数据键值框架使编写使用键值存储的Spring应用程序变得容易。 它最大程度地减少了与商店交互所需的冗余任务和样板代码。该框架非常适合Redis和Riak等键值存储。 在本文档中将介绍如何在默认的基于java.util.Map的实现中使用Spring Data Key Value  。 第一部分、环境搭建1.创建Maven工程，添加依赖项坐标12345&lt;depend">
+<meta property="article:published_time" content="2020-07-15T09:18:55.815Z">
+<meta property="article:modified_time" content="2020-07-15T07:13:11.717Z">
+<meta property="article:author" content="LoneStar">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/07/15/SpringDataKeyValue/"/>
+
+
+
+
+
+  <title>SpringDataKeyValue | LoneStar's Space</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">LoneStar's Space</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/15/SpringDataKeyValue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LoneStar">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LoneStar's Space">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SpringDataKeyValue</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-15T17:18:55+08:00">
+                2020-07-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>Spring数据键值框架使编写使用键值存储的Spring应用程序变得容易。</p>
+<p>它最大程度地减少了与商店交互所需的冗余任务和样板代码。该框架非常适合Redis和Riak等键值存储。</p>
+<p>在本文档中将介绍如何在默认的基于java.util.Map的实现中使用Spring Data Key Value  。</p>
+<h3 id="第一部分、环境搭建"><a href="#第一部分、环境搭建" class="headerlink" title="第一部分、环境搭建"></a>第一部分、环境搭建</h3><h4 id="1-创建Maven工程，添加依赖项坐标"><a href="#1-创建Maven工程，添加依赖项坐标" class="headerlink" title="1.创建Maven工程，添加依赖项坐标"></a>1.创建Maven工程，添加依赖项坐标</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.data<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-data-keyvalue<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3.1.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-配置整合Spring-Data-Key-Value的配置类"><a href="#2-配置整合Spring-Data-Key-Value的配置类" class="headerlink" title="2.配置整合Spring Data Key Value的配置类"></a>2.配置整合Spring Data Key Value的配置类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(basePackages = &#123;<span class="string">"pers.lonestar.demo"</span>&#125;)</span><br><span class="line"><span class="meta">@EnableMapRepositories</span>(<span class="string">"pers.lonestar.demo.dao"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="第二部分、简单CRUD操作"><a href="#第二部分、简单CRUD操作" class="headerlink" title="第二部分、简单CRUD操作"></a>第二部分、简单CRUD操作</h3><h4 id="1-定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系"><a href="#1-定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系" class="headerlink" title="1.定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系"></a>1.定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系</h4><p><code>KeySpace</code>注解定义了实体应该保存到数据结构的哪一部分，类似于JPA中<code>Table</code>表的概念。默认情况下，实体的键空间是从其类型中提取的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@KeySpace</span>(<span class="string">"person"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> String gender;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//constructor, getter and setter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-定义Repository接口，继承KeyValueRepository接口"><a href="#2-定义Repository接口，继承KeyValueRepository接口" class="headerlink" title="2.定义Repository接口，继承KeyValueRepository接口"></a>2.定义Repository接口，继承<code>KeyValueRepository</code>接口</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PersonDao</span> <span class="keyword">extends</span> <span class="title">KeyValueRepository</span>&lt;<span class="title">Person</span>, <span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="3-使用自定义Repository接口完成CRUD操作"><a href="#3-使用自定义Repository接口完成CRUD操作" class="headerlink" title="3.使用自定义Repository接口完成CRUD操作"></a>3.使用自定义Repository接口完成CRUD操作</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringJUnit4ClassRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">ContextConfiguration</span>(<span class="title">classes</span> </span>= DemoConfig<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">KeyValueDemo</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> PersonDao personDao;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检索对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testFind</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        personDao.findAll().forEach(System.out::println);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//更新对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testUpdate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Person person = personDao.findById(<span class="number">1</span>).get();</span><br><span class="line">        person.setGender(<span class="string">"Female"</span>);</span><br><span class="line">        personDao.save(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//删除对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testDelete</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Person person = personDao.findById(<span class="number">1</span>).get();</span><br><span class="line">        personDao.delete(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//保存对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSave</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Person person1 = <span class="keyword">new</span> Person();</span><br><span class="line">        person1.setName(<span class="string">"TestUser"</span>);</span><br><span class="line">        person1.setAge(<span class="number">20</span>);</span><br><span class="line">        person1.setGender(<span class="string">"Male"</span>);</span><br><span class="line">        personDao.save(person1);</span><br><span class="line"></span><br><span class="line">        Person person2 = <span class="keyword">new</span> Person();</span><br><span class="line">        person2.setName(<span class="string">"TestUser2"</span>);</span><br><span class="line">        person2.setAge(<span class="number">25</span>);</span><br><span class="line">        person2.setGender(<span class="string">"Female"</span>);</span><br><span class="line">        personDao.save(person2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="第三部分、自定义方法"><a href="#第三部分、自定义方法" class="headerlink" title="第三部分、自定义方法"></a>第三部分、自定义方法</h3><p>Spring Data KeyValue按照方法名解析规则如下：</p>
+<p><code>find</code>+全局修饰+<code>By</code>+实体属性名称+限定词+连接词+（其他实体属性）+<code>OrderBy</code>+排序属性+排序方向</p>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">List&lt;Person&gt; <span class="title">findByNameAndAgeBetweenAndGender</span><span class="params">(String name, Integer age1, Integer age2, String gender)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<center><strong>关键词规则样例</strong></center>
+
+<table>
+<thead>
+<tr>
+<th align="center">关键词</th>
+<th align="left">样例</th>
+<th>JPQL样例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">And</td>
+<td align="left">findByNameAndAge(String name, Integer age)</td>
+<td>where x.name= ?1 and x.age= ?2</td>
+</tr>
+<tr>
+<td align="center">Or</td>
+<td align="left">findByNameOrAge(String name, Integer age)</td>
+<td>where x.name= ?1 or x.age= ?2</td>
+</tr>
+<tr>
+<td align="center">Between</td>
+<td align="left">findByAgeBetween(Integer age1, Integer age2)</td>
+<td>where x.age&gt; ?1 and x.age&lt; ?2</td>
+</tr>
+<tr>
+<td align="center">LessThan</td>
+<td align="left">findByAgeLessThan(Integer age)</td>
+<td>where x.age &lt; ?1</td>
+</tr>
+<tr>
+<td align="center">GreaterThan</td>
+<td align="left">findByAgeGreaterThan(Integer age)</td>
+<td>where x.age &gt; ?1</td>
+</tr>
+<tr>
+<td align="center">After</td>
+<td align="left">findByDateAfer(Date date)</td>
+<td>where x.date &gt; ?1</td>
+</tr>
+<tr>
+<td align="center">Before</td>
+<td align="left">findByDateBefore(Date date)</td>
+<td>where x.date &lt; ?1</td>
+</tr>
+<tr>
+<td align="center">IsNull</td>
+<td align="left">findByAddressIsNull()</td>
+<td>where x.address is null</td>
+</tr>
+<tr>
+<td align="center">IsNotNull</td>
+<td align="left">findByAddressIsNotNull()</td>
+<td>where x.address not null</td>
+</tr>
+<tr>
+<td align="center">Like</td>
+<td align="left">findByNameLike(String name)</td>
+<td>where x.name like ?1</td>
+</tr>
+<tr>
+<td align="center">NotLike</td>
+<td align="left">findByNameNotLike(String name)</td>
+<td>where x.name not like ?1</td>
+</tr>
+<tr>
+<td align="center">StartingWith</td>
+<td align="left">findByNameStartingWith(String name)</td>
+<td>where x.name like ?1%</td>
+</tr>
+<tr>
+<td align="center">EndingWith</td>
+<td align="left">findByNameEndingWith(String name)</td>
+<td>where x.name like %?1</td>
+</tr>
+<tr>
+<td align="center">Containing</td>
+<td align="left">findByNameContaining(String name)</td>
+<td>where x.name like %?1%</td>
+</tr>
+<tr>
+<td align="center">OrderBy</td>
+<td align="left">findByNameOrderByAge(String name)</td>
+<td>where x.name = ?1 order by x.age</td>
+</tr>
+<tr>
+<td align="center">Not</td>
+<td align="left">findByNameNot(String name)</td>
+<td>where x.name &lt;&gt; ?1</td>
+</tr>
+<tr>
+<td align="center">In</td>
+<td align="left">findByNameIn(Collection<String> c)</td>
+<td>where x.name in ?1</td>
+</tr>
+<tr>
+<td align="center">NotIn</td>
+<td align="left">findByNameNotIn(Collection<String> c)</td>
+<td>where x.name not in ?1</td>
+</tr>
+<tr>
+<td align="center">TRUE</td>
+<td align="left">findByActiveTrue()</td>
+<td>where x.active = 1</td>
+</tr>
+<tr>
+<td align="center">FALSE</td>
+<td align="left">findByActiveFALSE()</td>
+<td>where x.active = 0</td>
+</tr>
+</tbody></table>
+<h3 id="第四部分、分页-amp-排序数据查询"><a href="#第四部分、分页-amp-排序数据查询" class="headerlink" title="第四部分、分页&amp;排序数据查询"></a>第四部分、分页&amp;排序数据查询</h3><h4 id="1-分页查询"><a href="#1-分页查询" class="headerlink" title="1.分页查询"></a>1.分页查询</h4><p>使用分页查询，需要自定义Repository接口继承<code>PagingAndSortingRepository</code>接口，从而使用其中的分页查询方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//自定义Repository接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PersonDao</span> <span class="keyword">extends</span> <span class="title">KeyValueRepository</span>&lt;<span class="title">Person</span>, <span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//KeyValueRepository接口已继承PagingAndSortingRepository接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">KeyValueRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; <span class="keyword">extends</span> <span class="title">PagingAndSortingRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>之后，便可构造Pageable对象，使用<code>findAll(Pageable pageable)</code>方法获取分页查询结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Pageable pageable = PageRequest.of(<span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line">Page&lt;Person&gt; page = personDao.findAll(pageable);</span><br><span class="line">System.out.println(page.getContent());</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-排序查询"><a href="#2-排序查询" class="headerlink" title="2.排序查询"></a>2.排序查询</h4><p>同样，自定义Repository接口继承<code>PagingAndSortingRepository</code>接口，从而使用其中的排序查询方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Sort sort = Sort.by(Sort.Direction.DESC, <span class="string">"age"</span>);</span><br><span class="line">personDao.findAll(sort).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="第五部分、使用KeyValueTemplate"><a href="#第五部分、使用KeyValueTemplate" class="headerlink" title="第五部分、使用KeyValueTemplate"></a>第五部分、使用KeyValueTemplate</h3><p>对数据结构执行操作的另一种方法是使用<code>KeyValueTemplate</code>。</p>
+<p>用最基本的术语来说，<code>KeyValueTemplate</code>使用一个<code>MapAdapter</code>包装一个<code>java.util.Map</code> 实现来执行查询和排序：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> KeyValueOperations <span class="title">keyValueTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> KeyValueTemplate(keyValueAdapter());</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> KeyValueAdapter <span class="title">keyValueAdapter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> MapKeyValueAdapter(WeakHashMap<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>请注意，如果我们使用<code>@EnableMapRepositories</code>，则无需指定 <code>KeyValueTemplate</code>。它将由Spring框架直接创建。</strong></p>
+<p> 借助KeyValueTemplate，我们可以执行与自定义Repository接口相同的操作。</p>
+<h4 id="1-保存对象"><a href="#1-保存对象" class="headerlink" title="1.保存对象"></a>1.保存对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Person person = <span class="keyword">new</span> Person();</span><br><span class="line">person.setName(<span class="string">"TestUser"</span>);</span><br><span class="line">person.setAge(<span class="number">20</span>);</span><br><span class="line">person.setGender(<span class="string">"Male"</span>);</span><br><span class="line">keyValueTemplate.insert(person);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-检索对象"><a href="#2-检索对象" class="headerlink" title="2.检索对象"></a>2.检索对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Person person=keyValueTemplate.findById(id, Person<span class="class">.<span class="keyword">class</span>).<span class="title">get</span>()</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="3-更新对象"><a href="#3-更新对象" class="headerlink" title="3.更新对象"></a>3.更新对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">person.setName(<span class="string">"Jacek"</span>);</span><br><span class="line">keyValueTemplate.update(person);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="4-删除对象"><a href="#4-删除对象" class="headerlink" title="4.删除对象"></a>4.删除对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keyValueTemplate.delete(id, Person<span class="class">.<span class="keyword">class</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keyValueTemplate.delete(person);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="5-获取所有对象"><a href="#5-获取所有对象" class="headerlink" title="5.获取所有对象"></a>5.获取所有对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Iterable&lt;Person&gt; persons = keyValueTemplate.findAll(Person<span class="class">.<span class="keyword">class</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="6-排序查询对象"><a href="#6-排序查询对象" class="headerlink" title="6.排序查询对象"></a>6.排序查询对象</h4><p>除了基本功能外，模板还支持<code>KeyValueQuery</code>来编写自定义查询。</p>
+<p>例如，我们可以使用其来获得基于年龄排序的人员列表：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">KeyValueQuery&lt;Person&gt; query = <span class="keyword">new</span> KeyValueQuery&lt;&gt;();</span><br><span class="line">query.setSort(Sort.by(Sort.Direction.DESC, <span class="string">"age"</span>));</span><br><span class="line">keyValueTemplate.find(query, Person.class).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/15/SpringDataJPA/" rel="next" title="SpringDataJPA">
+                <i class="fa fa-chevron-left"></i> SpringDataJPA
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/15/SpringDataLDAP/" rel="prev" title="SpringDataLDAP">
+                SpringDataLDAP <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">LoneStar</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第一部分、环境搭建"><span class="nav-number">2.</span> <span class="nav-text">第一部分、环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-创建Maven工程，添加依赖项坐标"><span class="nav-number">2.1.</span> <span class="nav-text">1.创建Maven工程，添加依赖项坐标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-配置整合Spring-Data-Key-Value的配置类"><span class="nav-number">2.2.</span> <span class="nav-text">2.配置整合Spring Data Key Value的配置类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二部分、简单CRUD操作"><span class="nav-number">3.</span> <span class="nav-text">第二部分、简单CRUD操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系"><span class="nav-number">3.1.</span> <span class="nav-text">1.定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-定义Repository接口，继承KeyValueRepository接口"><span class="nav-number">3.2.</span> <span class="nav-text">2.定义Repository接口，继承KeyValueRepository接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-使用自定义Repository接口完成CRUD操作"><span class="nav-number">3.3.</span> <span class="nav-text">3.使用自定义Repository接口完成CRUD操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三部分、自定义方法"><span class="nav-number">4.</span> <span class="nav-text">第三部分、自定义方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四部分、分页-amp-排序数据查询"><span class="nav-number">5.</span> <span class="nav-text">第四部分、分页&amp;排序数据查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-分页查询"><span class="nav-number">5.1.</span> <span class="nav-text">1.分页查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-排序查询"><span class="nav-number">5.2.</span> <span class="nav-text">2.排序查询</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第五部分、使用KeyValueTemplate"><span class="nav-number">6.</span> <span class="nav-text">第五部分、使用KeyValueTemplate</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-保存对象"><span class="nav-number">6.1.</span> <span class="nav-text">1.保存对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-检索对象"><span class="nav-number">6.2.</span> <span class="nav-text">2.检索对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-更新对象"><span class="nav-number">6.3.</span> <span class="nav-text">3.更新对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-删除对象"><span class="nav-number">6.4.</span> <span class="nav-text">4.删除对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-获取所有对象"><span class="nav-number">6.5.</span> <span class="nav-text">5.获取所有对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-排序查询对象"><span class="nav-number">6.6.</span> <span class="nav-text">6.排序查询对象</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LoneStar</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
