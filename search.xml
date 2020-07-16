@@ -1,6 +1,283 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>日常</title>
+    <url>/lonestar/2020/07/16/2020-07-16/</url>
+    <content><![CDATA[<p>2020-07-16 晴</p>
+<hr>
+<p>准备上线总控表、常规项目开发联调、准备代码评审等等，有些事虽然不想做但是还是不得不做啊。。。</p>
+<p>经过几天的折腾，总算是快结束了，写了个简单的SpringBoot应用，用来生成网银到核心的xml报文，不过好像也只能用一段时间了。</p>
+]]></content>
+      <tags>
+        <tag>日常</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Spring Data Key Value 使用文档</title>
+    <url>/lonestar/2020/07/15/SpringDataKeyValue/</url>
+    <content><![CDATA[<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>Spring数据键值框架使编写使用键值存储的Spring应用程序变得容易。</p>
+<p>它最大程度地减少了与商店交互所需的冗余任务和样板代码。该框架非常适合Redis和Riak等键值存储。</p>
+<p>在本文档中将介绍如何在默认的基于java.util.Map的实现中使用Spring Data Key Value  。</p>
+<h3 id="第一部分、环境搭建"><a href="#第一部分、环境搭建" class="headerlink" title="第一部分、环境搭建"></a>第一部分、环境搭建</h3><h4 id="1-创建Maven工程，添加依赖项坐标"><a href="#1-创建Maven工程，添加依赖项坐标" class="headerlink" title="1.创建Maven工程，添加依赖项坐标"></a>1.创建Maven工程，添加依赖项坐标</h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.data<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-data-keyvalue<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3.1.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-配置整合Spring-Data-Key-Value的配置类"><a href="#2-配置整合Spring-Data-Key-Value的配置类" class="headerlink" title="2.配置整合Spring Data Key Value的配置类"></a>2.配置整合Spring Data Key Value的配置类</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(basePackages = &#123;<span class="string">"pers.lonestar.demo"</span>&#125;)</span><br><span class="line"><span class="meta">@EnableMapRepositories</span>(<span class="string">"pers.lonestar.demo.dao"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="第二部分、简单CRUD操作"><a href="#第二部分、简单CRUD操作" class="headerlink" title="第二部分、简单CRUD操作"></a>第二部分、简单CRUD操作</h3><h4 id="1-定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系"><a href="#1-定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系" class="headerlink" title="1.定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系"></a>1.定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系</h4><p><code>KeySpace</code>注解定义了实体应该保存到数据结构的哪一部分，类似于JPA中<code>Table</code>表的概念。默认情况下，实体的键空间是从其类型中提取的。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@KeySpace</span>(<span class="string">"person"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> String gender;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//constructor, getter and setter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-定义Repository接口，继承KeyValueRepository接口"><a href="#2-定义Repository接口，继承KeyValueRepository接口" class="headerlink" title="2.定义Repository接口，继承KeyValueRepository接口"></a>2.定义Repository接口，继承<code>KeyValueRepository</code>接口</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PersonDao</span> <span class="keyword">extends</span> <span class="title">KeyValueRepository</span>&lt;<span class="title">Person</span>, <span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="3-使用自定义Repository接口完成CRUD操作"><a href="#3-使用自定义Repository接口完成CRUD操作" class="headerlink" title="3.使用自定义Repository接口完成CRUD操作"></a>3.使用自定义Repository接口完成CRUD操作</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringJUnit4ClassRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">ContextConfiguration</span>(<span class="title">classes</span> </span>= DemoConfig<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">KeyValueDemo</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> PersonDao personDao;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检索对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testFind</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        personDao.findAll().forEach(System.out::println);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//更新对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testUpdate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Person person = personDao.findById(<span class="number">1</span>).get();</span><br><span class="line">        person.setGender(<span class="string">"Female"</span>);</span><br><span class="line">        personDao.save(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//删除对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testDelete</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Person person = personDao.findById(<span class="number">1</span>).get();</span><br><span class="line">        personDao.delete(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//保存对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSave</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Person person1 = <span class="keyword">new</span> Person();</span><br><span class="line">        person1.setName(<span class="string">"TestUser"</span>);</span><br><span class="line">        person1.setAge(<span class="number">20</span>);</span><br><span class="line">        person1.setGender(<span class="string">"Male"</span>);</span><br><span class="line">        personDao.save(person1);</span><br><span class="line"></span><br><span class="line">        Person person2 = <span class="keyword">new</span> Person();</span><br><span class="line">        person2.setName(<span class="string">"TestUser2"</span>);</span><br><span class="line">        person2.setAge(<span class="number">25</span>);</span><br><span class="line">        person2.setGender(<span class="string">"Female"</span>);</span><br><span class="line">        personDao.save(person2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="第三部分、自定义方法"><a href="#第三部分、自定义方法" class="headerlink" title="第三部分、自定义方法"></a>第三部分、自定义方法</h3><p>Spring Data KeyValue按照方法名解析规则如下：</p>
+<p><code>find</code>+全局修饰+<code>By</code>+实体属性名称+限定词+连接词+（其他实体属性）+<code>OrderBy</code>+排序属性+排序方向</p>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">List&lt;Person&gt; <span class="title">findByNameAndAgeBetweenAndGender</span><span class="params">(String name, Integer age1, Integer age2, String gender)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<center><strong>关键词规则样例</strong></center>
+
+<table>
+<thead>
+<tr>
+<th align="center">关键词</th>
+<th align="left">样例</th>
+<th>JPQL样例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">And</td>
+<td align="left">findByNameAndAge(String name, Integer age)</td>
+<td>where x.name= ?1 and x.age= ?2</td>
+</tr>
+<tr>
+<td align="center">Or</td>
+<td align="left">findByNameOrAge(String name, Integer age)</td>
+<td>where x.name= ?1 or x.age= ?2</td>
+</tr>
+<tr>
+<td align="center">Between</td>
+<td align="left">findByAgeBetween(Integer age1, Integer age2)</td>
+<td>where x.age&gt; ?1 and x.age&lt; ?2</td>
+</tr>
+<tr>
+<td align="center">LessThan</td>
+<td align="left">findByAgeLessThan(Integer age)</td>
+<td>where x.age &lt; ?1</td>
+</tr>
+<tr>
+<td align="center">GreaterThan</td>
+<td align="left">findByAgeGreaterThan(Integer age)</td>
+<td>where x.age &gt; ?1</td>
+</tr>
+<tr>
+<td align="center">After</td>
+<td align="left">findByDateAfer(Date date)</td>
+<td>where x.date &gt; ?1</td>
+</tr>
+<tr>
+<td align="center">Before</td>
+<td align="left">findByDateBefore(Date date)</td>
+<td>where x.date &lt; ?1</td>
+</tr>
+<tr>
+<td align="center">IsNull</td>
+<td align="left">findByAddressIsNull()</td>
+<td>where x.address is null</td>
+</tr>
+<tr>
+<td align="center">IsNotNull</td>
+<td align="left">findByAddressIsNotNull()</td>
+<td>where x.address not null</td>
+</tr>
+<tr>
+<td align="center">Like</td>
+<td align="left">findByNameLike(String name)</td>
+<td>where x.name like ?1</td>
+</tr>
+<tr>
+<td align="center">NotLike</td>
+<td align="left">findByNameNotLike(String name)</td>
+<td>where x.name not like ?1</td>
+</tr>
+<tr>
+<td align="center">StartingWith</td>
+<td align="left">findByNameStartingWith(String name)</td>
+<td>where x.name like ?1%</td>
+</tr>
+<tr>
+<td align="center">EndingWith</td>
+<td align="left">findByNameEndingWith(String name)</td>
+<td>where x.name like %?1</td>
+</tr>
+<tr>
+<td align="center">Containing</td>
+<td align="left">findByNameContaining(String name)</td>
+<td>where x.name like %?1%</td>
+</tr>
+<tr>
+<td align="center">OrderBy</td>
+<td align="left">findByNameOrderByAge(String name)</td>
+<td>where x.name = ?1 order by x.age</td>
+</tr>
+<tr>
+<td align="center">Not</td>
+<td align="left">findByNameNot(String name)</td>
+<td>where x.name &lt;&gt; ?1</td>
+</tr>
+<tr>
+<td align="center">In</td>
+<td align="left">findByNameIn(Collection<String> c)</td>
+<td>where x.name in ?1</td>
+</tr>
+<tr>
+<td align="center">NotIn</td>
+<td align="left">findByNameNotIn(Collection<String> c)</td>
+<td>where x.name not in ?1</td>
+</tr>
+<tr>
+<td align="center">TRUE</td>
+<td align="left">findByActiveTrue()</td>
+<td>where x.active = 1</td>
+</tr>
+<tr>
+<td align="center">FALSE</td>
+<td align="left">findByActiveFALSE()</td>
+<td>where x.active = 0</td>
+</tr>
+</tbody></table>
+<h3 id="第四部分、分页-amp-排序数据查询"><a href="#第四部分、分页-amp-排序数据查询" class="headerlink" title="第四部分、分页&amp;排序数据查询"></a>第四部分、分页&amp;排序数据查询</h3><h4 id="1-分页查询"><a href="#1-分页查询" class="headerlink" title="1.分页查询"></a>1.分页查询</h4><p>使用分页查询，需要自定义Repository接口继承<code>PagingAndSortingRepository</code>接口，从而使用其中的分页查询方法。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//自定义Repository接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PersonDao</span> <span class="keyword">extends</span> <span class="title">KeyValueRepository</span>&lt;<span class="title">Person</span>, <span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//KeyValueRepository接口已继承PagingAndSortingRepository接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">KeyValueRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; <span class="keyword">extends</span> <span class="title">PagingAndSortingRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>之后，便可构造Pageable对象，使用<code>findAll(Pageable pageable)</code>方法获取分页查询结果。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Pageable pageable = PageRequest.of(<span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line">Page&lt;Person&gt; page = personDao.findAll(pageable);</span><br><span class="line">System.out.println(page.getContent());</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-排序查询"><a href="#2-排序查询" class="headerlink" title="2.排序查询"></a>2.排序查询</h4><p>同样，自定义Repository接口继承<code>PagingAndSortingRepository</code>接口，从而使用其中的排序查询方法。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Sort sort = Sort.by(Sort.Direction.DESC, <span class="string">"age"</span>);</span><br><span class="line">personDao.findAll(sort).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="第五部分、使用KeyValueTemplate"><a href="#第五部分、使用KeyValueTemplate" class="headerlink" title="第五部分、使用KeyValueTemplate"></a>第五部分、使用KeyValueTemplate</h3><p>对数据结构执行操作的另一种方法是使用<code>KeyValueTemplate</code>。</p>
+<p>用最基本的术语来说，<code>KeyValueTemplate</code>使用一个<code>MapAdapter</code>包装一个<code>java.util.Map</code> 实现来执行查询和排序：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> KeyValueOperations <span class="title">keyValueTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> KeyValueTemplate(keyValueAdapter());</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> KeyValueAdapter <span class="title">keyValueAdapter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> MapKeyValueAdapter(WeakHashMap<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>请注意，如果我们使用<code>@EnableMapRepositories</code>，则无需指定 <code>KeyValueTemplate</code>。它将由Spring框架直接创建。</strong></p>
+<p> 借助KeyValueTemplate，我们可以执行与自定义Repository接口相同的操作。</p>
+<h4 id="1-保存对象"><a href="#1-保存对象" class="headerlink" title="1.保存对象"></a>1.保存对象</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Person person = <span class="keyword">new</span> Person();</span><br><span class="line">person.setName(<span class="string">"TestUser"</span>);</span><br><span class="line">person.setAge(<span class="number">20</span>);</span><br><span class="line">person.setGender(<span class="string">"Male"</span>);</span><br><span class="line">keyValueTemplate.insert(person);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-检索对象"><a href="#2-检索对象" class="headerlink" title="2.检索对象"></a>2.检索对象</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Person person=keyValueTemplate.findById(id, Person<span class="class">.<span class="keyword">class</span>).<span class="title">get</span>()</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="3-更新对象"><a href="#3-更新对象" class="headerlink" title="3.更新对象"></a>3.更新对象</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">person.setName(<span class="string">"Jacek"</span>);</span><br><span class="line">keyValueTemplate.update(person);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="4-删除对象"><a href="#4-删除对象" class="headerlink" title="4.删除对象"></a>4.删除对象</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">keyValueTemplate.delete(id, Person<span class="class">.<span class="keyword">class</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">keyValueTemplate.delete(person);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="5-获取所有对象"><a href="#5-获取所有对象" class="headerlink" title="5.获取所有对象"></a>5.获取所有对象</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Iterable&lt;Person&gt; persons = keyValueTemplate.findAll(Person<span class="class">.<span class="keyword">class</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="6-排序查询对象"><a href="#6-排序查询对象" class="headerlink" title="6.排序查询对象"></a>6.排序查询对象</h4><p>除了基本功能外，模板还支持<code>KeyValueQuery</code>来编写自定义查询。</p>
+<p>例如，我们可以使用其来获得基于年龄排序的人员列表：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">KeyValueQuery&lt;Person&gt; query = <span class="keyword">new</span> KeyValueQuery&lt;&gt;();</span><br><span class="line">query.setSort(Sort.by(Sort.Direction.DESC, <span class="string">"age"</span>));</span><br><span class="line">keyValueTemplate.find(query, Person.class).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Spring Data</category>
+      </categories>
+      <tags>
+        <tag>Spring</tag>
+        <tag>Spring Data</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Spring Data LDAP 使用文档</title>
+    <url>/lonestar/2020/07/15/SpringDataLDAP/</url>
+    <content><![CDATA[<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>Spring数据键值框架使编写使用键值存储的Spring应用程序变得容易。</p>
+<p>它最大程度地减少了与商店交互所需的冗余任务和样板代码。该框架非常适合Redis和Riak等键值存储。</p>
+<p>在本文档中将介绍如何在默认的基于java.util.Map的实现中使用Spring Data Key Value  。</p>
+<h3 id="第一部分、环境搭建"><a href="#第一部分、环境搭建" class="headerlink" title="第一部分、环境搭建"></a>第一部分、环境搭建</h3><h4 id="1-创建SpringBoot工程，添加依赖项坐标"><a href="#1-创建SpringBoot工程，添加依赖项坐标" class="headerlink" title="1.创建SpringBoot工程，添加依赖项坐标"></a>1.创建SpringBoot工程，添加依赖项坐标</h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-ldap<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.unboundid<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>unboundid-ldapsdk<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>spring-boot-starter-data-ldap</code>是Spring Boot封装的对LDAP自动化配置的实现，它是基于spring-data-ldap来对LDAP服务端进行具体操作的。</p>
+<p>而<code>unboundid-ldapsdk</code>主要是为了在这里使用嵌入式的LDAP服务端来进行测试操作，所以<code>scope</code>设置为了test，实际应用中，我们通常会连接真实的、独立部署的LDAP服务器，所以不需要此项依赖。</p>
+<h4 id="2-配置整合Spring-Data-Key-Value的配置类"><a href="#2-配置整合Spring-Data-Key-Value的配置类" class="headerlink" title="2.配置整合Spring Data Key Value的配置类"></a>2.配置整合Spring Data Key Value的配置类</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(basePackages = &#123;<span class="string">"pers.lonestar.demo"</span>&#125;)</span><br><span class="line"><span class="meta">@EnableMapRepositories</span>(<span class="string">"pers.lonestar.demo.dao"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="入门示例"><a href="#入门示例" class="headerlink" title="入门示例"></a>入门示例</h2><p>在了解了LDAP的基础概念之后，我们通过一个简单例子进一步理解！</p>
+<ul>
+<li>创建一个基础的Spring Boot项目（如果您还不会，可以参考这两篇文章：<a href="http://blog.didispace.com/spring-boot-learning-1/" target="_blank" rel="noopener">入门1</a>或<a href="http://blog.didispace.com/spring-initializr-in-intellij/" target="_blank" rel="noopener">入门2</a>）</li>
+<li>在<code>pom.xml</code>中引入两个重要依赖</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-ldap<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.unboundid<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>unboundid-ldapsdk<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>spring-boot-starter-data-ldap</code>是Spring Boot封装的对LDAP自动化配置的实现，它是基于spring-data-ldap来对LDAP服务端进行具体操作的。</p>
+<p>而<code>unboundid-ldapsdk</code>主要是为了在这里使用嵌入式的LDAP服务端来进行测试操作，所以<code>scope</code>设置为了test，实际应用中，我们通常会连接真实的、独立部署的LDAP服务器，所以不需要此项依赖。</p>
+<ul>
+<li>在<code>src/test/resources</code>目录下创建<code>ldap-server.ldif</code>文件，用来存储LDAP服务端的基础数据，以备后面的程序访问之用。</li>
+</ul>
+<figure class="highlight ldif"><table><tr><td class="code"><pre><span class="line"><span class="attribute">dn</span>: dc=didispace,dc=com</span><br><span class="line"><span class="attribute">objectClass</span>: top</span><br><span class="line"><span class="attribute">objectClass</span>: domain</span><br><span class="line"></span><br><span class="line"><span class="attribute">dn</span>: ou=people,dc=didispace,dc=com</span><br><span class="line"><span class="attribute">objectclass</span>: top</span><br><span class="line"><span class="attribute">objectclass</span>: organizationalUnit</span><br><span class="line"><span class="attribute">ou</span>: people</span><br><span class="line"></span><br><span class="line"><span class="attribute">dn</span>: uid=ben,ou=people,dc=didispace,dc=com</span><br><span class="line"><span class="attribute">objectclass</span>: top</span><br><span class="line"><span class="attribute">objectclass</span>: person</span><br><span class="line"><span class="attribute">objectclass</span>: organizationalPerson</span><br><span class="line"><span class="attribute">objectclass</span>: inetOrgPerson</span><br><span class="line"><span class="attribute">cn</span>: didi</span><br><span class="line"><span class="attribute">sn</span>: zhaiyongchao</span><br><span class="line"><span class="attribute">uid</span>: didi</span><br><span class="line"><span class="attribute">userPassword</span>: &#123;SHA&#125;nFCebWjxfaLbHHG1Qk5UU4trbvQ=</span><br></pre></td></tr></table></figure>
+
+<p>这里创建了一个基础用户，真实姓名为<code>zhaiyongchao</code>,常用名<code>didi</code>，在后面的程序中，我们会来读取这些信息。更多内容解释大家可以深入学习LDAP来理解，这里不做过多的讲解。</p>
+<ul>
+<li>在<code>application.properties</code>中添加嵌入式LDAP的配置</li>
+</ul>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">spring<span class="selector-class">.ldap</span><span class="selector-class">.embedded</span>.ldif=ldap-server.ldif</span><br><span class="line">spring<span class="selector-class">.ldap</span><span class="selector-class">.embedded</span>.base-dn=dc=didispace,dc=com</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用spring-data-ldap的基础用法，定义LDAP中属性与我们Java中定义实体的关系映射以及对应的Repository</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Entry(base = <span class="meta-string">"ou=people,dc=didispace,dc=com"</span>, objectClasses = <span class="meta-string">"inetOrgPerson"</span>)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Name id;</span><br><span class="line">    <span class="meta">@DnAttribute(value = <span class="meta-string">"uid"</span>, index = 3)</span></span><br><span class="line">    <span class="keyword">private</span> String uid;</span><br><span class="line">    <span class="meta">@Attribute(name = <span class="meta-string">"cn"</span>)</span></span><br><span class="line">    <span class="keyword">private</span> String commonName;</span><br><span class="line">    <span class="meta">@Attribute(name = <span class="meta-string">"sn"</span>)</span></span><br><span class="line">    <span class="keyword">private</span> String suerName;</span><br><span class="line">    <span class="keyword">private</span> String userPassword;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PersonRepository</span> <span class="title">extends</span> <span class="title">CrudRepository</span>&lt;<span class="type">Person, Name</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过上面的定义之后，已经将Person对象与LDAP存储内容实现了映射，我们只需要使用<code>PersonRepository</code>就可以轻松的对LDAP内容实现读写。</p>
+<ul>
+<li>创建单元测试用例读取所有用户信息：</li>
+</ul>
+<figure class="highlight less"><table><tr><td class="code"><pre><span class="line"><span class="variable">@RunWith</span>(SpringRunner.class)</span><br><span class="line"><span class="variable">@SpringBootTest</span></span><br><span class="line">public class ApplicationTests &#123;</span><br><span class="line"></span><br><span class="line">	<span class="variable">@Autowired</span></span><br><span class="line">	private PersonRepository personRepository;</span><br><span class="line"></span><br><span class="line">	<span class="variable">@Test</span></span><br><span class="line">	public void findAll() throws Exception &#123;</span><br><span class="line">		<span class="selector-tag">personRepository</span><span class="selector-class">.findAll</span>()<span class="selector-class">.forEach</span>(p -&gt; &#123;</span><br><span class="line">			<span class="selector-tag">System</span><span class="selector-class">.out</span><span class="selector-class">.println</span>(p);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动该测试用例之后，我们可以看到控制台中输出了刚才维护在<code>ldap-server.ldif</code>中的用户信息：</p>
+<figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line"><span class="number">2018</span><span class="number">-01</span><span class="number">-27</span> <span class="number">14</span>:<span class="number">25</span>:<span class="number">06.283</span>  WARN <span class="number">73630</span> --- [           main] o.s.ldap.odm.core.impl.ObjectMetaData    : The Entry <span class="keyword">class</span> <span class="symbol">Person</span> <span class="symbol">should</span> <span class="symbol">be</span> <span class="symbol">declared</span> <span class="symbol">final</span></span><br><span class="line"><span class="symbol">Person</span>(<span class="symbol">id</span>=<span class="symbol">uid</span>=<span class="symbol">ben,<span class="symbol">ou</span></span>=<span class="symbol">people,<span class="symbol">dc</span></span>=<span class="symbol">didispace,<span class="symbol">dc</span></span>=<span class="symbol">com, <span class="symbol">uid</span></span>=<span class="symbol">ben, <span class="symbol">commonName</span></span>=<span class="symbol">didi, <span class="symbol">suerName</span></span>=<span class="symbol">zhaiyongchao, <span class="symbol">userPassword</span></span>=<span class="symbol">123,<span class="symbol">83</span>,<span class="symbol">72</span>,<span class="symbol">65</span>,<span class="symbol">125</span>,<span class="symbol">110</span>,<span class="symbol">70</span>,<span class="symbol">67</span>,<span class="symbol">101</span>,<span class="symbol">98</span>,<span class="symbol">87</span>,<span class="symbol">106</span>,<span class="symbol">120</span>,<span class="symbol">102</span>,<span class="symbol">97</span>,<span class="symbol">76</span>,<span class="symbol">98</span>,<span class="symbol">72</span>,<span class="symbol">72</span>,<span class="symbol">71</span>,<span class="symbol">49</span>,<span class="symbol">81</span>,<span class="symbol">107</span>,<span class="symbol">53</span>,<span class="symbol">85</span>,<span class="symbol">85</span>,<span class="symbol">52</span>,<span class="symbol">116</span>,<span class="symbol">114</span>,<span class="symbol">98</span>,<span class="symbol">118</span>,<span class="symbol">81</span>,<span class="symbol">61</span></span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加用户"><a href="#添加用户" class="headerlink" title="添加用户"></a>添加用户</h3><p>通过上面的入门示例，如果您能够独立完成，那么在Spring Boot中操作LDAP的基础目标已经完成了。</p>
+<p>如果您足够了解Spring Data，其实不难想到，这个在其下的子项目必然也遵守Repsitory的抽象。所以，我们可以使用上面定义的<code>PersonRepository</code>来轻松实现操作，比如下面的代码就可以方便的往LDAP中添加用户：</p>
+<figure class="highlight abnf"><table><tr><td class="code"><pre><span class="line">Person person = new Person()<span class="comment">;</span></span><br><span class="line">person.setUid(<span class="string">"uid:1"</span>)<span class="comment">;</span></span><br><span class="line">person.setSuerName(<span class="string">"AAA"</span>)<span class="comment">;</span></span><br><span class="line">person.setCommonName(<span class="string">"aaa"</span>)<span class="comment">;</span></span><br><span class="line">person.setUserPassword(<span class="string">"123456"</span>)<span class="comment">;</span></span><br><span class="line">personRepository.save(person)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果还想实现更多操作，您可以参考spring-data-ldap的文档来进行使用。</p>
+<h3 id="连接LDAP服务端"><a href="#连接LDAP服务端" class="headerlink" title="连接LDAP服务端"></a>连接LDAP服务端</h3><p>在本文的例子中都采用了嵌入式的LDAP服务器，事实上这种方式也仅限于我们本地测试开发使用，真实环境下LDAP服务端必然是独立部署的。</p>
+<p>在Spring Boot的封装下，我们只需要配置下面这些参数就能将上面的例子连接到远端的LDAP而不是嵌入式的LDAP。</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring.ldap.urls</span>=ldap://localhost:<span class="number">1235</span></span><br><span class="line"><span class="attr">spring.ldap.base</span>=dc=didispace,dc=com</span><br><span class="line"><span class="attr">spring.ldap.username</span>=didispace</span><br><span class="line"><span class="attr">spring.ldap.password</span>=<span class="number">123456</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Spring Data</category>
+      </categories>
+      <tags>
+        <tag>Spring</tag>
+        <tag>Spring Data</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Spring Data JPA 使用文档</title>
     <url>/lonestar/2020/07/15/SpringDataJPA/</url>
     <content><![CDATA[<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>Spring Data JPA是Spring基于ORM框架、JPA规范的基础上封装的一套JPA应用框架，提供了包括增删改查等在内的常用功能，且易于扩展。</p>
@@ -272,271 +549,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Spring Data LDAP 使用文档</title>
-    <url>/lonestar/2020/07/15/SpringDataLDAP/</url>
-    <content><![CDATA[<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>Spring数据键值框架使编写使用键值存储的Spring应用程序变得容易。</p>
-<p>它最大程度地减少了与商店交互所需的冗余任务和样板代码。该框架非常适合Redis和Riak等键值存储。</p>
-<p>在本文档中将介绍如何在默认的基于java.util.Map的实现中使用Spring Data Key Value  。</p>
-<h3 id="第一部分、环境搭建"><a href="#第一部分、环境搭建" class="headerlink" title="第一部分、环境搭建"></a>第一部分、环境搭建</h3><h4 id="1-创建SpringBoot工程，添加依赖项坐标"><a href="#1-创建SpringBoot工程，添加依赖项坐标" class="headerlink" title="1.创建SpringBoot工程，添加依赖项坐标"></a>1.创建SpringBoot工程，添加依赖项坐标</h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-ldap<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.unboundid<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>unboundid-ldapsdk<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>其中，<code>spring-boot-starter-data-ldap</code>是Spring Boot封装的对LDAP自动化配置的实现，它是基于spring-data-ldap来对LDAP服务端进行具体操作的。</p>
-<p>而<code>unboundid-ldapsdk</code>主要是为了在这里使用嵌入式的LDAP服务端来进行测试操作，所以<code>scope</code>设置为了test，实际应用中，我们通常会连接真实的、独立部署的LDAP服务器，所以不需要此项依赖。</p>
-<h4 id="2-配置整合Spring-Data-Key-Value的配置类"><a href="#2-配置整合Spring-Data-Key-Value的配置类" class="headerlink" title="2.配置整合Spring Data Key Value的配置类"></a>2.配置整合Spring Data Key Value的配置类</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(basePackages = &#123;<span class="string">"pers.lonestar.demo"</span>&#125;)</span><br><span class="line"><span class="meta">@EnableMapRepositories</span>(<span class="string">"pers.lonestar.demo.dao"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="入门示例"><a href="#入门示例" class="headerlink" title="入门示例"></a>入门示例</h2><p>在了解了LDAP的基础概念之后，我们通过一个简单例子进一步理解！</p>
-<ul>
-<li>创建一个基础的Spring Boot项目（如果您还不会，可以参考这两篇文章：<a href="http://blog.didispace.com/spring-boot-learning-1/" target="_blank" rel="noopener">入门1</a>或<a href="http://blog.didispace.com/spring-initializr-in-intellij/" target="_blank" rel="noopener">入门2</a>）</li>
-<li>在<code>pom.xml</code>中引入两个重要依赖</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-ldap<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.unboundid<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>unboundid-ldapsdk<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>其中，<code>spring-boot-starter-data-ldap</code>是Spring Boot封装的对LDAP自动化配置的实现，它是基于spring-data-ldap来对LDAP服务端进行具体操作的。</p>
-<p>而<code>unboundid-ldapsdk</code>主要是为了在这里使用嵌入式的LDAP服务端来进行测试操作，所以<code>scope</code>设置为了test，实际应用中，我们通常会连接真实的、独立部署的LDAP服务器，所以不需要此项依赖。</p>
-<ul>
-<li>在<code>src/test/resources</code>目录下创建<code>ldap-server.ldif</code>文件，用来存储LDAP服务端的基础数据，以备后面的程序访问之用。</li>
-</ul>
-<figure class="highlight ldif"><table><tr><td class="code"><pre><span class="line"><span class="attribute">dn</span>: dc=didispace,dc=com</span><br><span class="line"><span class="attribute">objectClass</span>: top</span><br><span class="line"><span class="attribute">objectClass</span>: domain</span><br><span class="line"></span><br><span class="line"><span class="attribute">dn</span>: ou=people,dc=didispace,dc=com</span><br><span class="line"><span class="attribute">objectclass</span>: top</span><br><span class="line"><span class="attribute">objectclass</span>: organizationalUnit</span><br><span class="line"><span class="attribute">ou</span>: people</span><br><span class="line"></span><br><span class="line"><span class="attribute">dn</span>: uid=ben,ou=people,dc=didispace,dc=com</span><br><span class="line"><span class="attribute">objectclass</span>: top</span><br><span class="line"><span class="attribute">objectclass</span>: person</span><br><span class="line"><span class="attribute">objectclass</span>: organizationalPerson</span><br><span class="line"><span class="attribute">objectclass</span>: inetOrgPerson</span><br><span class="line"><span class="attribute">cn</span>: didi</span><br><span class="line"><span class="attribute">sn</span>: zhaiyongchao</span><br><span class="line"><span class="attribute">uid</span>: didi</span><br><span class="line"><span class="attribute">userPassword</span>: &#123;SHA&#125;nFCebWjxfaLbHHG1Qk5UU4trbvQ=</span><br></pre></td></tr></table></figure>
-
-<p>这里创建了一个基础用户，真实姓名为<code>zhaiyongchao</code>,常用名<code>didi</code>，在后面的程序中，我们会来读取这些信息。更多内容解释大家可以深入学习LDAP来理解，这里不做过多的讲解。</p>
-<ul>
-<li>在<code>application.properties</code>中添加嵌入式LDAP的配置</li>
-</ul>
-<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">spring<span class="selector-class">.ldap</span><span class="selector-class">.embedded</span>.ldif=ldap-server.ldif</span><br><span class="line">spring<span class="selector-class">.ldap</span><span class="selector-class">.embedded</span>.base-dn=dc=didispace,dc=com</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>使用spring-data-ldap的基础用法，定义LDAP中属性与我们Java中定义实体的关系映射以及对应的Repository</li>
-</ul>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Entry(base = <span class="meta-string">"ou=people,dc=didispace,dc=com"</span>, objectClasses = <span class="meta-string">"inetOrgPerson"</span>)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Name id;</span><br><span class="line">    <span class="meta">@DnAttribute(value = <span class="meta-string">"uid"</span>, index = 3)</span></span><br><span class="line">    <span class="keyword">private</span> String uid;</span><br><span class="line">    <span class="meta">@Attribute(name = <span class="meta-string">"cn"</span>)</span></span><br><span class="line">    <span class="keyword">private</span> String commonName;</span><br><span class="line">    <span class="meta">@Attribute(name = <span class="meta-string">"sn"</span>)</span></span><br><span class="line">    <span class="keyword">private</span> String suerName;</span><br><span class="line">    <span class="keyword">private</span> String userPassword;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PersonRepository</span> <span class="title">extends</span> <span class="title">CrudRepository</span>&lt;<span class="type">Person, Name</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>通过上面的定义之后，已经将Person对象与LDAP存储内容实现了映射，我们只需要使用<code>PersonRepository</code>就可以轻松的对LDAP内容实现读写。</p>
-<ul>
-<li>创建单元测试用例读取所有用户信息：</li>
-</ul>
-<figure class="highlight less"><table><tr><td class="code"><pre><span class="line"><span class="variable">@RunWith</span>(SpringRunner.class)</span><br><span class="line"><span class="variable">@SpringBootTest</span></span><br><span class="line">public class ApplicationTests &#123;</span><br><span class="line"></span><br><span class="line">	<span class="variable">@Autowired</span></span><br><span class="line">	private PersonRepository personRepository;</span><br><span class="line"></span><br><span class="line">	<span class="variable">@Test</span></span><br><span class="line">	public void findAll() throws Exception &#123;</span><br><span class="line">		<span class="selector-tag">personRepository</span><span class="selector-class">.findAll</span>()<span class="selector-class">.forEach</span>(p -&gt; &#123;</span><br><span class="line">			<span class="selector-tag">System</span><span class="selector-class">.out</span><span class="selector-class">.println</span>(p);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>启动该测试用例之后，我们可以看到控制台中输出了刚才维护在<code>ldap-server.ldif</code>中的用户信息：</p>
-<figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line"><span class="number">2018</span><span class="number">-01</span><span class="number">-27</span> <span class="number">14</span>:<span class="number">25</span>:<span class="number">06.283</span>  WARN <span class="number">73630</span> --- [           main] o.s.ldap.odm.core.impl.ObjectMetaData    : The Entry <span class="keyword">class</span> <span class="symbol">Person</span> <span class="symbol">should</span> <span class="symbol">be</span> <span class="symbol">declared</span> <span class="symbol">final</span></span><br><span class="line"><span class="symbol">Person</span>(<span class="symbol">id</span>=<span class="symbol">uid</span>=<span class="symbol">ben,<span class="symbol">ou</span></span>=<span class="symbol">people,<span class="symbol">dc</span></span>=<span class="symbol">didispace,<span class="symbol">dc</span></span>=<span class="symbol">com, <span class="symbol">uid</span></span>=<span class="symbol">ben, <span class="symbol">commonName</span></span>=<span class="symbol">didi, <span class="symbol">suerName</span></span>=<span class="symbol">zhaiyongchao, <span class="symbol">userPassword</span></span>=<span class="symbol">123,<span class="symbol">83</span>,<span class="symbol">72</span>,<span class="symbol">65</span>,<span class="symbol">125</span>,<span class="symbol">110</span>,<span class="symbol">70</span>,<span class="symbol">67</span>,<span class="symbol">101</span>,<span class="symbol">98</span>,<span class="symbol">87</span>,<span class="symbol">106</span>,<span class="symbol">120</span>,<span class="symbol">102</span>,<span class="symbol">97</span>,<span class="symbol">76</span>,<span class="symbol">98</span>,<span class="symbol">72</span>,<span class="symbol">72</span>,<span class="symbol">71</span>,<span class="symbol">49</span>,<span class="symbol">81</span>,<span class="symbol">107</span>,<span class="symbol">53</span>,<span class="symbol">85</span>,<span class="symbol">85</span>,<span class="symbol">52</span>,<span class="symbol">116</span>,<span class="symbol">114</span>,<span class="symbol">98</span>,<span class="symbol">118</span>,<span class="symbol">81</span>,<span class="symbol">61</span></span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="添加用户"><a href="#添加用户" class="headerlink" title="添加用户"></a>添加用户</h3><p>通过上面的入门示例，如果您能够独立完成，那么在Spring Boot中操作LDAP的基础目标已经完成了。</p>
-<p>如果您足够了解Spring Data，其实不难想到，这个在其下的子项目必然也遵守Repsitory的抽象。所以，我们可以使用上面定义的<code>PersonRepository</code>来轻松实现操作，比如下面的代码就可以方便的往LDAP中添加用户：</p>
-<figure class="highlight abnf"><table><tr><td class="code"><pre><span class="line">Person person = new Person()<span class="comment">;</span></span><br><span class="line">person.setUid(<span class="string">"uid:1"</span>)<span class="comment">;</span></span><br><span class="line">person.setSuerName(<span class="string">"AAA"</span>)<span class="comment">;</span></span><br><span class="line">person.setCommonName(<span class="string">"aaa"</span>)<span class="comment">;</span></span><br><span class="line">person.setUserPassword(<span class="string">"123456"</span>)<span class="comment">;</span></span><br><span class="line">personRepository.save(person)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-
-<p>如果还想实现更多操作，您可以参考spring-data-ldap的文档来进行使用。</p>
-<h3 id="连接LDAP服务端"><a href="#连接LDAP服务端" class="headerlink" title="连接LDAP服务端"></a>连接LDAP服务端</h3><p>在本文的例子中都采用了嵌入式的LDAP服务器，事实上这种方式也仅限于我们本地测试开发使用，真实环境下LDAP服务端必然是独立部署的。</p>
-<p>在Spring Boot的封装下，我们只需要配置下面这些参数就能将上面的例子连接到远端的LDAP而不是嵌入式的LDAP。</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring.ldap.urls</span>=ldap://localhost:<span class="number">1235</span></span><br><span class="line"><span class="attr">spring.ldap.base</span>=dc=didispace,dc=com</span><br><span class="line"><span class="attr">spring.ldap.username</span>=didispace</span><br><span class="line"><span class="attr">spring.ldap.password</span>=<span class="number">123456</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Spring Data</category>
-      </categories>
-      <tags>
-        <tag>Spring</tag>
-        <tag>Spring Data</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Spring Data Key Value 使用文档</title>
-    <url>/lonestar/2020/07/15/SpringDataKeyValue/</url>
-    <content><![CDATA[<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>Spring数据键值框架使编写使用键值存储的Spring应用程序变得容易。</p>
-<p>它最大程度地减少了与商店交互所需的冗余任务和样板代码。该框架非常适合Redis和Riak等键值存储。</p>
-<p>在本文档中将介绍如何在默认的基于java.util.Map的实现中使用Spring Data Key Value  。</p>
-<h3 id="第一部分、环境搭建"><a href="#第一部分、环境搭建" class="headerlink" title="第一部分、环境搭建"></a>第一部分、环境搭建</h3><h4 id="1-创建Maven工程，添加依赖项坐标"><a href="#1-创建Maven工程，添加依赖项坐标" class="headerlink" title="1.创建Maven工程，添加依赖项坐标"></a>1.创建Maven工程，添加依赖项坐标</h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.data<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-data-keyvalue<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3.1.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="2-配置整合Spring-Data-Key-Value的配置类"><a href="#2-配置整合Spring-Data-Key-Value的配置类" class="headerlink" title="2.配置整合Spring Data Key Value的配置类"></a>2.配置整合Spring Data Key Value的配置类</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(basePackages = &#123;<span class="string">"pers.lonestar.demo"</span>&#125;)</span><br><span class="line"><span class="meta">@EnableMapRepositories</span>(<span class="string">"pers.lonestar.demo.dao"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="第二部分、简单CRUD操作"><a href="#第二部分、简单CRUD操作" class="headerlink" title="第二部分、简单CRUD操作"></a>第二部分、简单CRUD操作</h3><h4 id="1-定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系"><a href="#1-定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系" class="headerlink" title="1.定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系"></a>1.定义实体类，配置实体类到数据库表以及实体类属性到数据库字段的映射关系</h4><p><code>KeySpace</code>注解定义了实体应该保存到数据结构的哪一部分，类似于JPA中<code>Table</code>表的概念。默认情况下，实体的键空间是从其类型中提取的。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@KeySpace</span>(<span class="string">"person"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> String gender;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//constructor, getter and setter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="2-定义Repository接口，继承KeyValueRepository接口"><a href="#2-定义Repository接口，继承KeyValueRepository接口" class="headerlink" title="2.定义Repository接口，继承KeyValueRepository接口"></a>2.定义Repository接口，继承<code>KeyValueRepository</code>接口</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PersonDao</span> <span class="keyword">extends</span> <span class="title">KeyValueRepository</span>&lt;<span class="title">Person</span>, <span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="3-使用自定义Repository接口完成CRUD操作"><a href="#3-使用自定义Repository接口完成CRUD操作" class="headerlink" title="3.使用自定义Repository接口完成CRUD操作"></a>3.使用自定义Repository接口完成CRUD操作</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringJUnit4ClassRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">ContextConfiguration</span>(<span class="title">classes</span> </span>= DemoConfig<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">KeyValueDemo</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> PersonDao personDao;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检索对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testFind</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        personDao.findAll().forEach(System.out::println);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//更新对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testUpdate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Person person = personDao.findById(<span class="number">1</span>).get();</span><br><span class="line">        person.setGender(<span class="string">"Female"</span>);</span><br><span class="line">        personDao.save(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//删除对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testDelete</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Person person = personDao.findById(<span class="number">1</span>).get();</span><br><span class="line">        personDao.delete(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//保存对象</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSave</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Person person1 = <span class="keyword">new</span> Person();</span><br><span class="line">        person1.setName(<span class="string">"TestUser"</span>);</span><br><span class="line">        person1.setAge(<span class="number">20</span>);</span><br><span class="line">        person1.setGender(<span class="string">"Male"</span>);</span><br><span class="line">        personDao.save(person1);</span><br><span class="line"></span><br><span class="line">        Person person2 = <span class="keyword">new</span> Person();</span><br><span class="line">        person2.setName(<span class="string">"TestUser2"</span>);</span><br><span class="line">        person2.setAge(<span class="number">25</span>);</span><br><span class="line">        person2.setGender(<span class="string">"Female"</span>);</span><br><span class="line">        personDao.save(person2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="第三部分、自定义方法"><a href="#第三部分、自定义方法" class="headerlink" title="第三部分、自定义方法"></a>第三部分、自定义方法</h3><p>Spring Data KeyValue按照方法名解析规则如下：</p>
-<p><code>find</code>+全局修饰+<code>By</code>+实体属性名称+限定词+连接词+（其他实体属性）+<code>OrderBy</code>+排序属性+排序方向</p>
-<p>例如：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">List&lt;Person&gt; <span class="title">findByNameAndAgeBetweenAndGender</span><span class="params">(String name, Integer age1, Integer age2, String gender)</span></span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<center><strong>关键词规则样例</strong></center>
-
-<table>
-<thead>
-<tr>
-<th align="center">关键词</th>
-<th align="left">样例</th>
-<th>JPQL样例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">And</td>
-<td align="left">findByNameAndAge(String name, Integer age)</td>
-<td>where x.name= ?1 and x.age= ?2</td>
-</tr>
-<tr>
-<td align="center">Or</td>
-<td align="left">findByNameOrAge(String name, Integer age)</td>
-<td>where x.name= ?1 or x.age= ?2</td>
-</tr>
-<tr>
-<td align="center">Between</td>
-<td align="left">findByAgeBetween(Integer age1, Integer age2)</td>
-<td>where x.age&gt; ?1 and x.age&lt; ?2</td>
-</tr>
-<tr>
-<td align="center">LessThan</td>
-<td align="left">findByAgeLessThan(Integer age)</td>
-<td>where x.age &lt; ?1</td>
-</tr>
-<tr>
-<td align="center">GreaterThan</td>
-<td align="left">findByAgeGreaterThan(Integer age)</td>
-<td>where x.age &gt; ?1</td>
-</tr>
-<tr>
-<td align="center">After</td>
-<td align="left">findByDateAfer(Date date)</td>
-<td>where x.date &gt; ?1</td>
-</tr>
-<tr>
-<td align="center">Before</td>
-<td align="left">findByDateBefore(Date date)</td>
-<td>where x.date &lt; ?1</td>
-</tr>
-<tr>
-<td align="center">IsNull</td>
-<td align="left">findByAddressIsNull()</td>
-<td>where x.address is null</td>
-</tr>
-<tr>
-<td align="center">IsNotNull</td>
-<td align="left">findByAddressIsNotNull()</td>
-<td>where x.address not null</td>
-</tr>
-<tr>
-<td align="center">Like</td>
-<td align="left">findByNameLike(String name)</td>
-<td>where x.name like ?1</td>
-</tr>
-<tr>
-<td align="center">NotLike</td>
-<td align="left">findByNameNotLike(String name)</td>
-<td>where x.name not like ?1</td>
-</tr>
-<tr>
-<td align="center">StartingWith</td>
-<td align="left">findByNameStartingWith(String name)</td>
-<td>where x.name like ?1%</td>
-</tr>
-<tr>
-<td align="center">EndingWith</td>
-<td align="left">findByNameEndingWith(String name)</td>
-<td>where x.name like %?1</td>
-</tr>
-<tr>
-<td align="center">Containing</td>
-<td align="left">findByNameContaining(String name)</td>
-<td>where x.name like %?1%</td>
-</tr>
-<tr>
-<td align="center">OrderBy</td>
-<td align="left">findByNameOrderByAge(String name)</td>
-<td>where x.name = ?1 order by x.age</td>
-</tr>
-<tr>
-<td align="center">Not</td>
-<td align="left">findByNameNot(String name)</td>
-<td>where x.name &lt;&gt; ?1</td>
-</tr>
-<tr>
-<td align="center">In</td>
-<td align="left">findByNameIn(Collection<String> c)</td>
-<td>where x.name in ?1</td>
-</tr>
-<tr>
-<td align="center">NotIn</td>
-<td align="left">findByNameNotIn(Collection<String> c)</td>
-<td>where x.name not in ?1</td>
-</tr>
-<tr>
-<td align="center">TRUE</td>
-<td align="left">findByActiveTrue()</td>
-<td>where x.active = 1</td>
-</tr>
-<tr>
-<td align="center">FALSE</td>
-<td align="left">findByActiveFALSE()</td>
-<td>where x.active = 0</td>
-</tr>
-</tbody></table>
-<h3 id="第四部分、分页-amp-排序数据查询"><a href="#第四部分、分页-amp-排序数据查询" class="headerlink" title="第四部分、分页&amp;排序数据查询"></a>第四部分、分页&amp;排序数据查询</h3><h4 id="1-分页查询"><a href="#1-分页查询" class="headerlink" title="1.分页查询"></a>1.分页查询</h4><p>使用分页查询，需要自定义Repository接口继承<code>PagingAndSortingRepository</code>接口，从而使用其中的分页查询方法。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//自定义Repository接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PersonDao</span> <span class="keyword">extends</span> <span class="title">KeyValueRepository</span>&lt;<span class="title">Person</span>, <span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//KeyValueRepository接口已继承PagingAndSortingRepository接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">KeyValueRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; <span class="keyword">extends</span> <span class="title">PagingAndSortingRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>之后，便可构造Pageable对象，使用<code>findAll(Pageable pageable)</code>方法获取分页查询结果。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Pageable pageable = PageRequest.of(<span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line">Page&lt;Person&gt; page = personDao.findAll(pageable);</span><br><span class="line">System.out.println(page.getContent());</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="2-排序查询"><a href="#2-排序查询" class="headerlink" title="2.排序查询"></a>2.排序查询</h4><p>同样，自定义Repository接口继承<code>PagingAndSortingRepository</code>接口，从而使用其中的排序查询方法。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Sort sort = Sort.by(Sort.Direction.DESC, <span class="string">"age"</span>);</span><br><span class="line">personDao.findAll(sort).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="第五部分、使用KeyValueTemplate"><a href="#第五部分、使用KeyValueTemplate" class="headerlink" title="第五部分、使用KeyValueTemplate"></a>第五部分、使用KeyValueTemplate</h3><p>对数据结构执行操作的另一种方法是使用<code>KeyValueTemplate</code>。</p>
-<p>用最基本的术语来说，<code>KeyValueTemplate</code>使用一个<code>MapAdapter</code>包装一个<code>java.util.Map</code> 实现来执行查询和排序：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> KeyValueOperations <span class="title">keyValueTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> KeyValueTemplate(keyValueAdapter());</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> KeyValueAdapter <span class="title">keyValueAdapter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> MapKeyValueAdapter(WeakHashMap<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>请注意，如果我们使用<code>@EnableMapRepositories</code>，则无需指定 <code>KeyValueTemplate</code>。它将由Spring框架直接创建。</strong></p>
-<p> 借助KeyValueTemplate，我们可以执行与自定义Repository接口相同的操作。</p>
-<h4 id="1-保存对象"><a href="#1-保存对象" class="headerlink" title="1.保存对象"></a>1.保存对象</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Person person = <span class="keyword">new</span> Person();</span><br><span class="line">person.setName(<span class="string">"TestUser"</span>);</span><br><span class="line">person.setAge(<span class="number">20</span>);</span><br><span class="line">person.setGender(<span class="string">"Male"</span>);</span><br><span class="line">keyValueTemplate.insert(person);</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="2-检索对象"><a href="#2-检索对象" class="headerlink" title="2.检索对象"></a>2.检索对象</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Person person=keyValueTemplate.findById(id, Person<span class="class">.<span class="keyword">class</span>).<span class="title">get</span>()</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="3-更新对象"><a href="#3-更新对象" class="headerlink" title="3.更新对象"></a>3.更新对象</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">person.setName(<span class="string">"Jacek"</span>);</span><br><span class="line">keyValueTemplate.update(person);</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="4-删除对象"><a href="#4-删除对象" class="headerlink" title="4.删除对象"></a>4.删除对象</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">keyValueTemplate.delete(id, Person<span class="class">.<span class="keyword">class</span>)</span>;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">keyValueTemplate.delete(person);</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="5-获取所有对象"><a href="#5-获取所有对象" class="headerlink" title="5.获取所有对象"></a>5.获取所有对象</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Iterable&lt;Person&gt; persons = keyValueTemplate.findAll(Person<span class="class">.<span class="keyword">class</span>)</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="6-排序查询对象"><a href="#6-排序查询对象" class="headerlink" title="6.排序查询对象"></a>6.排序查询对象</h4><p>除了基本功能外，模板还支持<code>KeyValueQuery</code>来编写自定义查询。</p>
-<p>例如，我们可以使用其来获得基于年龄排序的人员列表：</p>
-<figure class="highlight"><table><tr><td class="code"><pre><span class="line">KeyValueQuery&lt;Person&gt; query = <span class="keyword">new</span> KeyValueQuery&lt;&gt;();</span><br><span class="line">query.setSort(Sort.by(Sort.Direction.DESC, <span class="string">"age"</span>));</span><br><span class="line">keyValueTemplate.find(query, Person.class).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>Spring Data</category>
-      </categories>
-      <tags>
-        <tag>Spring</tag>
-        <tag>Spring Data</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Spring Data REST 使用文档</title>
     <url>/lonestar/2020/07/15/SpringDataREST/</url>
     <content><![CDATA[<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>Spring Data Rest设计的目的是消除curd的模板代码，减少程序员的刻板的重复劳动，此框架需配合其他ORM框架使用如SDJ，使用时给人的直观感受就是暴露了资源仓库。</p>
@@ -609,18 +621,6 @@
       <tags>
         <tag>Spring</tag>
         <tag>Spring Data</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>日常</title>
-    <url>/lonestar/2020/07/16/2020-07-16/</url>
-    <content><![CDATA[<p>2020-07-16 晴</p>
-<hr>
-<p>准备上线总控表、常规项目开发联调、准备代码评审等等，有些事虽然不想做但是还是不得不做啊。。。</p>
-<p>经过几天的折腾，总算是快结束了，写了个简单的SpringBoot应用，用来生成网银到核心的xml报文，不过好像也只能用一段时间了。</p>
-]]></content>
-      <tags>
-        <tag>日常</tag>
       </tags>
   </entry>
 </search>
