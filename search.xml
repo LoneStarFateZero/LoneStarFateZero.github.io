@@ -611,4 +611,16 @@
         <tag>Spring Data</tag>
       </tags>
   </entry>
+  <entry>
+    <title>日常</title>
+    <url>/lonestar/2020/07/16/2020-07-16/</url>
+    <content><![CDATA[<p>2020-07-16 晴</p>
+<hr>
+<p>准备上线总控表、常规项目开发联调、准备代码评审等等，有些事虽然不想做但是还是不得不做啊。。。</p>
+<p>经过几天的折腾，总算是快结束了，写了个简单的SpringBoot应用，用来生成网银到核心的xml报文，不过好像也只能用一段时间了。</p>
+]]></content>
+      <tags>
+        <tag>日常</tag>
+      </tags>
+  </entry>
 </search>
