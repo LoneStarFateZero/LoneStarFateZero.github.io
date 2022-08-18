@@ -145,6 +145,309 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/18/redis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Lone Star">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LoneStar的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/18/redis/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-18 22:35:16" itemprop="dateCreated datePublished" datetime="2022-08-18T22:35:16+08:00">2022-08-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>keys *</td>
+<td>查看所有键</td>
+<td>127.0.0.1:6379&gt; keys *<br/>1) “python”<br/>2) “java”<br/>3) “hello”</td>
+</tr>
+<tr>
+<td>dbsize</td>
+<td>查看键总数</td>
+<td>127.0.0.1:6379&gt; dbsize<br/>(integer) 4</td>
+</tr>
+<tr>
+<td>exists key</td>
+<td>检查键是否存在</td>
+<td>127.0.0.1:6379&gt; exists exist_key<br/>(integer) 1<br/>127.0.0.1:6379&gt; exists not_exist_key<br/>(integer) 0</td>
+</tr>
+<tr>
+<td>del key [key …]</td>
+<td>删除键</td>
+<td>127.0.0.1:6379&gt; EXISTS exist_key<br/>(integer) 1<br/>127.0.0.1:6379&gt; del exist_key<br/>(integer) 1</td>
+</tr>
+<tr>
+<td>expire key seconds</td>
+<td>设置键过期</td>
+<td>127.0.0.1:6379&gt; set hello world<br/>OK<br/>127.0.0.1:6379&gt; expire hello 10<br/>(integer) 1</td>
+</tr>
+<tr>
+<td>ttl key</td>
+<td>查看键剩余过期时间<br />大于等于0的整数:键剩余的过期时间。<br />-1:键没设置过期时间。<br/>-2:键不存在</td>
+<td>#还剩7秒<br/>127.0.0.1:6379&gt; ttl hello<br/>(integer) 7<br/>…<br/>#还剩1秒<br/>127.0.0.1:6379&gt; ttl hello<br/>(integer) 1<br/>#返回结果为-2,说明键hello已经被删除<br/>127.0.0.1:6379&gt; ttl hello<br/>(integer) -2<br/>127.0.0.1:6379&gt; get hello<br/>(nil)</td>
+</tr>
+<tr>
+<td>type key</td>
+<td>查看键的数据结构类型，string、hash、list、set、zset，不存在则为none</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>数据结构和内部编码</p>
+<table>
+<thead>
+<tr>
+<th>数据结构</th>
+<th>内部编码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>string</td>
+<td>raw</td>
+</tr>
+<tr>
+<td></td>
+<td>int</td>
+</tr>
+<tr>
+<td></td>
+<td>embstr</td>
+</tr>
+<tr>
+<td>hash</td>
+<td>hashtable</td>
+</tr>
+<tr>
+<td></td>
+<td>ziplist</td>
+</tr>
+<tr>
+<td>list</td>
+<td>linkedlist</td>
+</tr>
+<tr>
+<td></td>
+<td>ziplist</td>
+</tr>
+<tr>
+<td></td>
+<td>quicklist</td>
+</tr>
+<tr>
+<td>set</td>
+<td>hashtable</td>
+</tr>
+<tr>
+<td></td>
+<td>intset</td>
+</tr>
+<tr>
+<td>zset</td>
+<td>skiplist</td>
+</tr>
+<tr>
+<td></td>
+<td>ziplist</td>
+</tr>
+</tbody></table>
+<p>字符串类型</p>
+<p>字符串、数字（整数、浮点数）、二进制</p>
+<p>命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>set key value [ex seconds] [px milliseconds] [nx|xx]</td>
+<td>设置值</td>
+<td></td>
+</tr>
+<tr>
+<td>setex key seconds value</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>setnx key value</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>get key</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>mset key value [key value …]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>mget key [key …]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>incr key</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>append key value</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>strlen key</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>getset key valu</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>setrange key offset value</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>getrange key start end</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>列表类型</p>
+<p>特点：</p>
+<ul>
+<li>列表中的元素是有序的</li>
+<li>列表中的元素可以重复</li>
+<li>索引下标从左到右是0到N-1，从右到左是-1到-N</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>添加</td>
+<td>rpush key value [value …]</td>
+<td>从右边插入元素</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>lpush key value [value …]</td>
+<td>从左边插入元素</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>linsert key before|after pivot value</td>
+<td>向某个元素前或后插入元素</td>
+<td></td>
+</tr>
+<tr>
+<td>查找</td>
+<td>lrange key start end</td>
+<td>获取指定范围内的元素列表，start和end均包含自身</td>
+<td>返回list全部元素<br />lrange 0 -1<br />返回末尾元素<br />lrange -1 -5</td>
+</tr>
+<tr>
+<td></td>
+<td>lindex key index</td>
+<td>获取列表指定索引下标的元素</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>llen key</td>
+<td>获取列表长度</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/06/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -277,7 +580,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-count">2</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
